@@ -27,38 +27,25 @@ const validarEmail = (email) => {
     );
 };
 
+//Conferir campos necessarios
+function conferirNecessario(arr) {
+    arr.forEach(function(item) {
+        if (item.value.trim() === '') {
+            mostrarErro(item, `${nomeCampo(item)} e necessario`);
+        } else {
+            mostrarValido(item);
+        }
+    });
+}
+
+//Nome do campo formatado
+function nomeCampo(item) {
+    return item.id.charAt(0).toUpperCase() + item.id.slice(1);
+}
+
 //Event Listeners
 formulario.addEventListener('submit', function(e) {
     e.preventDefault();
     
-    if (usuario.value === '') {
-        mostrarErro(usuario, 'Usuario necessario');
-    }
-    else {
-        mostrarValido(usuario);
-    }
-
-    if (email.value === '') {
-        mostrarErro(email, 'Email necessario');
-    } 
-    else if (!validarEmail(email.value)) {
-        mostrarErro(email, 'Email invalido');
-    }
-    else {
-        mostrarValido(email);
-    }
-
-    if (senha.value === '') {
-        mostrarErro(senha, 'Senha necessaria');
-    }
-    else {
-        mostrarValido(senha);
-    }
-
-    if (senha2.value === '') {
-        mostrarErro(senha2, 'Confirmacao necessaria');
-    }
-    else {
-        mostrarValido(senha2);
-    }
+    conferirNecessario([usuario, email, senha, senha2]);
 });
