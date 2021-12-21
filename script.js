@@ -6,41 +6,59 @@ const senha = document.getElementById('senha');
 const senha2 = document.getElementById('senha2');
 
 // Alerta erro ou valido
-function mostrarErro(input, mensagem) {
+function mostrarErro (input, mensagem) {
     const controleFormulario = input.parentElement;
     controleFormulario.className = 'controleFormulario erro';
     const small = controleFormulario.querySelector('small');
     small.innerText = mensagem;
 }
 
-function mostrarValido(input) {
+function mostrarValido (input) {
     const controleFormulario = input.parentElement;
     controleFormulario.className = 'controleFormulario valido';
 }
 
 //Validacao email
-const validarEmail = (email) => {
-    return String(email)
-    .toLowerCase()
-    .match(
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
+function validarEmail (input) {
+    if (input.value == '') {
+        mostrarErro(input, 'Email é necessario');
+        return; //!?
+    }
+
+    const reEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!reEmail.test(input.value.trim())) {
+        mostrarErro(input, 'Email não é valido');
+    }
 };
 
 //Conferir campos necessarios
-function conferirNecessario(arr) {
-    arr.forEach(function(item) {
-        if (item.value.trim() === '') {
-            mostrarErro(item, `${nomeCampo(item)} e necessario`);
+function conferirNecessario (arr) {
+    arr.forEach(function(input) {
+        if (input.value.trim() === '') {
+            mostrarErro(input, `${nomeCampo(input)} é necessario`);
         } else {
-            mostrarValido(item);
+            mostrarValido(input);
         }
     });
 }
 
+//Conferir tamanho de input
+function conferirTamanho (input, min, max) {
+    if (input.value.length < min) {
+        mostrarErro(input, `${nomeCampo(input)} deve ter pelo menos ${min} caracteres.`)
+    } else if (input.value.length > max) {
+        mostrarErro(input, `${nomeCampo(input)} deve ter até ${max} caracteres.`)
+    }
+}
+
+//Conferir igualdade de senhas
+function conferirSenhas (input, input2) {
+    if (input.value !== input2.value) mostrarErro(input2, 'Senha diferente');
+}
+
 //Nome do campo formatado
-function nomeCampo(item) {
-    return item.id.charAt(0).toUpperCase() + item.id.slice(1);
+function nomeCampo (input) {
+    return input.id.charAt(0).toUpperCase() + input.id.slice(1);
 }
 
 //Event Listeners
@@ -48,4 +66,8 @@ formulario.addEventListener('submit', function(e) {
     e.preventDefault();
     
     conferirNecessario([usuario, email, senha, senha2]);
+    validarEmail(email);
+    conferirTamanho(usuario, 3, 20);
+    conferirTamanho(senha, 6, 30);
+    conferirSenhas(senha, senha2);
 });
